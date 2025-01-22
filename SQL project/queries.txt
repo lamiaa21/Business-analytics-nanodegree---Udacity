@@ -1,0 +1,64 @@
+-- first query | the top customers by total spending
+ SELECT 
+    c.CustomerId, 
+    c.FirstName || ' ' || c.LastName AS CustomerName, 
+    SUM(il.UnitPrice * il.Quantity) AS TotalSpending
+FROM 
+    Customer c
+JOIN 
+    Invoice i ON c.CustomerId = i.CustomerId
+JOIN 
+    InvoiceLine il ON i.InvoiceId = il.InvoiceId
+GROUP BY 
+    c.CustomerId, c.FirstName, c.LastName
+ORDER BY 
+    TotalSpending DESC
+LIMIT 10;
+
+
+-- second query | the top-selling tracks by revenue.
+SELECT 
+    t.TrackId, 
+    t.Name AS TrackName, 
+    SUM(il.UnitPrice * il.Quantity) AS TotalRevenue
+FROM 
+    Track t
+JOIN 
+    InvoiceLine il ON t.TrackId = il.TrackId
+GROUP BY 
+    t.TrackId, t.Name
+ORDER BY 
+    TotalRevenue DESC
+LIMIT 10;
+
+	
+-- third query | the employees associated with the highest number of invoices.
+SELECT 
+    e.EmployeeId, 
+    e.FirstName || ' ' || e.LastName AS EmployeeName, 
+    COUNT(i.InvoiceId) AS TotalInvoices
+FROM 
+    Employee e
+LEFT JOIN 
+    Customer c ON e.EmployeeId = c.SupportRepId
+LEFT JOIN 
+    Invoice i ON c.CustomerId = i.CustomerId
+GROUP BY 
+    e.EmployeeId, e.FirstName, e.LastName
+ORDER BY 
+    TotalInvoices DESC;
+	
+	
+-- fourth query | the playlists with the most tracks.	
+SELECT 
+    p.PlaylistId, 
+    p.Name AS PlaylistName, 
+    COUNT(pt.TrackId) AS TrackCount
+FROM 
+    Playlist p
+JOIN 
+    PlaylistTrack pt ON p.PlaylistId = pt.PlaylistId
+GROUP BY 
+    p.PlaylistId, p.Name
+ORDER BY 
+    TrackCount DESC;
